@@ -1,25 +1,24 @@
-# === stage 1: build the app with maven ===
+# === stage 1: build the app with Maven ===
 FROM maven:3.8.3-openjdk-17 AS builder
 WORKDIR /build
 
-# Cache maven deps (optional)
+# Cache Maven dependencies
 COPY pom.xml .
 RUN mvn -B -DskipTests dependency:go-offline
 
-# Copy sources and build
+# Copy source code and build
 COPY src ./src
 RUN mvn -B clean package -DskipTests
 
-# === stage 2: tomcat runtime with WAR copied into webapps ===
-FROM tomcat:9.0-jdk17
-# Remove default apps to keep container slim
-RUN rm -rf /usr/local/tomcat/webapps/*
-# Copy the built WAR from builder stage
-COPY --from=builder /build/target/*.war /usr/local/tomcat/webapps/ROOT.war
+# === stage 2: runtime ===
+FROM openjdk:17-jdk-slim
+WORKDIR /app
 
-# Expose Tomcat port
+# Copy the built JAR from the builder stage
+COPY --from=builder /build/target/insure-me-1.0.jar app.jar
+
+# Expose application port (Spring Boot default)
 EXPOSE 8083
 
-# Start Tomcat (default CMD in base image is fine)
-CMD ["catalina.sh", "run"]
-
+# Run the JAR
+ENTRYPOINT ["java", "-jar", "app.jar"]
