@@ -1,0 +1,5 @@
+---
+- hosts: dev,prod,stage
+  become: true
+  roles:
+    - app 
