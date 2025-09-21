@@ -2,7 +2,7 @@ pipeline {
     agent { label 'master' }
 
     environment {
-        DOCKER_IMAGE = "sathish1102/bankingapp"
+        DOCKER_IMAGE = "sathish1102/insuranceapp"
         DOCKER_TAG = "${env.BUILD_NUMBER ?: 'latest'}"
         ANSIBLE_INVENTORY = 'ansible/inventory.yml'
     }
@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', credentialsId: 'Github', url: 'https://github.com/Sathish-11/Banking-Project1.git'
+                git branch: 'main', url: 'https://github.com/Sathish-11/star-agile-insurance-project.git'
             }
         }
 
